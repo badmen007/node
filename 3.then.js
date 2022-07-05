@@ -11,7 +11,7 @@ let promise2 = promise.then(data => {
   // return promise2;
   return new Promise((resolve, reject) => { 
     setTimeout(()=>{
-      resolve(new Promise((resolve,reject)=>{ // 这里理解的不是很明白
+      resolve(new Promise((resolve,reject)=>{ // 这里理解的不是很明白  现在理解了
           setTimeout(()=>{
               resolve('ok')
           },1000)

@@ -61,6 +61,12 @@ class Promise {
     this.onRejectedCallbacks = [];
 
     const resolve = (value) => {
+
+      if (value instanceof Promise) {
+        // 递归解析的流程
+        return value.then(resolve, reject);
+      }
+
       if(this.status === PENDING) {
         this.value = value;
         this.status = FULFILLED;
@@ -137,6 +143,50 @@ class Promise {
     })
     return promise2;
   }
+
+  
+  catch(errCallback) {
+    return this.then(null, errCallback);
+  }
+
+  static resolve(value) {
+    return new Promise((resolve, reject) => {
+      resolve(value);
+    })
+  }
+
+  static reject(reason) {
+    return new Promise((resolve, reject) => {
+      reject(reason);
+    })
+  }
+
+  static all(values) {
+    let count = 0;
+    let arr = [];
+    function processData(index, data) {
+      arr[index] = data;
+      if(++count == values.length) {
+        resolve(arr);
+      }
+    }
+
+    for(let i = 0; i < values.length; i++) {
+      let curr = values[i];
+      Promise.resolve(curr).then(data => {  // 将普通的值包装成promise
+        processData(i, data);
+      },reject);
+    }
+  }
+
+  static race(values) {
+    return new Promise((resolve, reject) => {
+      for(let i = 0; i < values.length; i++) {
+        Promise.resolve(values[i]).then(resovle, reject);
+      }
+    })
+  }
+  
 
 }
 
